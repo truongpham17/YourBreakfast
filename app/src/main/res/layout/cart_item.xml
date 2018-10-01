@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp">
+    <RelativeLayout
+        android:id="@+id/view_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#616161">
+        <LinearLayout
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:background="@android:color/holo_red_dark"
+            android:layout_height="match_parent"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+            <TextView
+                android:id="@+id/txtDelete"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:text="DELETE"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_delete_black_24dp_2"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/view_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="8dp"
+        app:cardMaxElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imgFood"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="Food image"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/txtFoodName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/imgFood"
+                android:text="Food Name"
+                android:textColor="@color/secondaryDark"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtFoodPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtFoodName"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/imgFood"
+                android:text="Price: $1000"
+                android:textColor="#616161"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtSum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/txtFoodPrice"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/quantity"
+                android:gravity="end"
+                android:text="Sum: $1000"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="24sp" />
+
+            <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                android:id="@+id/quantity"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_below="@id/txtFoodPrice"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/imgFood"
+                app:backGroundColor="@color/secondaryLight"
+                app:initialNumber="1"
+                app:textColor="@color/colorPrimary"
+                app:textSize="6sp" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>

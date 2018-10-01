@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/my_bg"
+    tools:context=".SignInActivity">
+
+    <TextView
+        android:textSize="38sp"
+        android:text="Sign In"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:text="+841298872906"
+            android:id="@+id/txtPhone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_edit_text_height"
+            android:layout_below="@id/txtName"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+            android:hint="Your phone"
+            android:textColorHint="@color/colorPrimary"
+            app:met_textColorHint="@color/colorPrimary"
+            android:inputType="phone"
+            android:textSize="25sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="Enter your phone, we will send verify code to that number"
+            app:met_floatingLabelTextColor="@android:color/white"
+            app:met_floatingLabelTextSize="14sp"
+            app:met_maxCharacters="15"
+            app:met_textColor="@color/textOnS" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/txtPassword"
+            android:layout_width="match_parent"
+            android:textColorHint="@color/colorPrimary"
+            app:met_textColorHint="@color/colorPrimary"
+            android:layout_height="@dimen/material_edit_text_height"
+            android:layout_below="@id/txtPhone"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textSize="25sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelTextColor="@android:color/white"
+            app:met_floatingLabelTextSize="14sp"
+            app:met_textColor="@color/textOnS"
+            android:layout_marginBottom="50dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtForgot"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/colorPrimary"
+        android:layout_below="@id/linearLayout"
+        android:text="Forgot your password?"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic" />
+
+    <Button
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/txtForgot"
+        android:layout_marginBottom="40dp"
+        android:id="@+id/btnSignIn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:layout_centerHorizontal="true"
+        android:background="@color/blue_normal"
+        />
+    <TextView
+        android:id="@+id/txtSignUp"
+        android:layout_marginBottom="10sp"
+        android:textSize="14sp"
+        android:textColor="@color/colorPrimary"
+        android:layout_centerHorizontal="true"
+        android:text="Not account yet? Create one"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".UserProfileActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/secondaryDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextAppearance="@style/Toolbar.TitleTextForSetting" />
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_above="@id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBarLayout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/backGround"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@color/secondaryLight">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/user" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/txtUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/backGround"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_person_black_24dp"
+                android:gravity="center_vertical"
+                android:hint="Your name"
+                android:padding="8dp"
+                android:textColor="@android:color/black" />
+
+            <EditText
+                android:id="@+id/txtPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtUserName"
+                android:focusable="false"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_call_black_24dp"
+                android:gravity="center_vertical"
+                android:hint="Your phone"
+                android:inputType="phone"
+                android:padding="8dp"
+                android:textColor="@android:color/black" />
+            <TextView
+                android:layout_below="@id/txtPhone"
+                android:drawableStart="@drawable/ic_password_blue_24dp"
+                android:text="Edit Password"
+                android:textColor="@color/blue_normal"
+                android:textSize="18sp"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:layout_margin="8dp"
+                android:id="@+id/txtEditPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/txtAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtEditPassword"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_home_black_24dp"
+                android:gravity="center_vertical"
+                android:text="Your Address"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgAddAddress"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/txtEditPassword"
+                android:layout_margin="12dp"
+                android:layout_toEndOf="@id/txtAddress"
+                android:background="@drawable/circle"
+                android:src="@drawable/ic_add_black_24dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtAddress" />
+
+            <TextView
+                android:id="@+id/txtPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recyclerView"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_payment_black_24dp"
+                android:gravity="center_vertical"
+                android:text="Payment method"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgAddPayment"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/recyclerView"
+                android:layout_margin="12dp"
+                android:layout_toEndOf="@id/txtPayment"
+                android:background="@drawable/circle"
+                android:src="@drawable/ic_add_black_24dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewPayment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtPayment" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/btnSave"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/mybutton"
+        android:layout_centerHorizontal="true"
+        android:drawableStart="@drawable/ic_done_black_24dp"
+        android:padding="8dp"
+        android:text="SAVE"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "925885279116",
+    "firebase_url": "https://your-breakfast.firebaseio.com",
+    "project_id": "your-breakfast",
+    "storage_bucket": "your-breakfast.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925885279116:android:9a71beb90e481bb1",
+        "android_client_info": {
+          "package_name": "com.example.user.your_breakfast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925885279116-p355ogktcbb013u7rr49gn9gtjh648hm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user.your_breakfast",
+            "certificate_hash": "ead3acdcb3b9e863679c9ca07af160d916fde215"
+          }
+        },
+        {
+          "client_id": "925885279116-n2fnfalgj360jhnl7k40dasi87c9f9ec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAke4hUAewirrBxbVx2Qzta8YDDEQ89RvI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925885279116-n2fnfalgj360jhnl7k40dasi87c9f9ec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

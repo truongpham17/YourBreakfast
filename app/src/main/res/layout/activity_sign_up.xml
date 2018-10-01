@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/my_bg">
+    <TextView
+        android:textSize="38sp"
+        android:text="Create New Account"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/txtName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_edit_text_height"
+            android:layout_gravity="center"
+            android:textColorHint="@color/colorPrimary"
+            app:met_textColorHint="@color/colorPrimary"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+            android:hint="Name"
+            android:inputType="textPersonName"
+            android:textSize="25sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelTextColor="@android:color/white"
+            app:met_floatingLabelTextSize="14sp"
+            app:met_maxCharacters="50"
+            app:met_textColor="@color/textOnS" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/txtPhone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_edit_text_height"
+            android:layout_below="@id/txtName"
+            android:textColorHint="@color/colorPrimary"
+            app:met_textColorHint="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+            android:hint="Your phone"
+            android:text="+841298872906"
+            android:inputType="phone"
+            android:textSize="25sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="Enter your phone, we will send verify code to that number"
+            app:met_floatingLabelTextColor="@android:color/white"
+            app:met_floatingLabelTextSize="14sp"
+            app:met_maxCharacters="15"
+            app:met_textColor="@color/textOnS" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/txtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/material_edit_text_height"
+            android:layout_below="@id/txtPhone"
+            android:textColorHint="@color/colorPrimary"
+            app:met_textColorHint="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textSize="25sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelTextColor="@android:color/white"
+            app:met_floatingLabelTextSize="14sp"
+            app:met_textColor="@color/textOnS"
+            android:layout_marginBottom="50dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:weightSum="2">
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sign Up"
+            android:layout_marginEnd="10dp"
+            android:background="@color/blue_normal"
+            />
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Have an account?"
+            android:textSize="10sp"
+            android:layout_marginStart="10dp"
+            android:background="@color/blue_normal"/>
+    </LinearLayout>
+
+</RelativeLayout>
