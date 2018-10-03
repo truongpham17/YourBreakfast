@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -98,6 +99,7 @@ public class FoodCategoryActivity extends AppCompatActivity
         if (image.equals("null")) {
 
         } else {
+            Log.d("Loading image", "addControls: Successfully!");
             Picasso.get().load(image).into(img);
         }
         Toolbar toolbar = findViewById(R.id.toolbar);

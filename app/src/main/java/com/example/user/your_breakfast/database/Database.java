@@ -20,6 +20,7 @@ public class Database extends SQLiteAssetHelper {
     private static final int DB_VER = 1;
     private static final String TABLE_NAME = "cart";
     private static final String REQUEST_TABLE_NAME = "orderId";
+    private static final String FAVORITE_TABLE_NAME = "favorite";
 
     public Database(Context context) {
         super(context, DB_NAME, null, null, DB_VER);
@@ -107,6 +108,20 @@ public class Database extends SQLiteAssetHelper {
     public void addRequestID(String requestID, String phoneNumber) {
         SQLiteDatabase db = getReadableDatabase();
         String query = String.format("Insert into %s (ID, userID) values( '%s','%s' )", REQUEST_TABLE_NAME, requestID, phoneNumber);
+        db.execSQL(query);
+        db.close();
+    }
+
+    public void addToFavorite(String foodID) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("Insert into %s values ('%s')", FAVORITE_TABLE_NAME, foodID);
+        db.execSQL(query);
+        db.close();
+    }
+
+    public void removeFromFavorite(String foodID) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("Delete from %s where foodID = '%s'", FAVORITE_TABLE_NAME, foodID);
         db.execSQL(query);
         db.close();
     }

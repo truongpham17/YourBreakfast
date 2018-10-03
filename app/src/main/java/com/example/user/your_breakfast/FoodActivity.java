@@ -135,18 +135,14 @@ public class FoodActivity extends AppCompatActivity {
         btnLike.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(foodId, true);
-                editor.apply();
+                new Database(FoodActivity.this).addToFavorite(foodId);
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Added to favorite!", Snackbar.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(foodId, false);
-                editor.apply();
+               new Database(FoodActivity.this).removeFromFavorite(foodId);
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Removed from favorite!", Snackbar.LENGTH_SHORT).show();
             }
         });
