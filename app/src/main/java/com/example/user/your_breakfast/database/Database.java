@@ -112,11 +112,13 @@ public class Database extends SQLiteAssetHelper {
         db.close();
     }
 
-    public void addToFavorite(String foodID) {
-        SQLiteDatabase db = getReadableDatabase();
-        String query = String.format("Insert into %s values ('%s')", FAVORITE_TABLE_NAME, foodID);
-        db.execSQL(query);
-        db.close();
+    public void addToFavorite(String foodID, String foodName, String foodPrice, String imgURL) {
+        if (!isFavorite(foodID)) {
+            SQLiteDatabase db = getReadableDatabase();
+            String query = String.format("Insert into %s(foodID, name, price, imgURL) values ('%s', '%s', '%s', '%s')", FAVORITE_TABLE_NAME, foodID, foodName, foodPrice, imgURL);
+            db.execSQL(query);
+            db.close();
+        }
     }
 
     public void removeFromFavorite(String foodID) {
@@ -124,6 +126,36 @@ public class Database extends SQLiteAssetHelper {
         String query = String.format("Delete from %s where foodID = '%s'", FAVORITE_TABLE_NAME, foodID);
         db.execSQL(query);
         db.close();
+    }
+
+    public boolean isFavorite(String foodID) {
+        boolean result;
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("Select foodID from %s where foodID = '%s'", FAVORITE_TABLE_NAME, foodID);
+        Cursor cs = db.rawQuery(query, null);
+        if(cs.getCount() > 0){
+            result = true ;
+        } else{
+            result = false;
+        }
+        cs.close();
+        db.close();
+        return result;
+    }
+
+    public List<Food> getAllFavorite() {
+        ArrayList<Food> result = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("Select * from %s", FAVORITE_TABLE_NAME);
+        Cursor cs = db.rawQuery(query, null);
+        while (cs.moveToNext()) {
+            result.add(new Food(cs.getString(cs.getColumnIndex("name"))
+                    , cs.getString(cs.getColumnIndex("price"))
+                    , null, null, cs.getString(cs.getColumnIndex("foodID"))));
+        }
+        cs.close();
+        db.close();
+        return result;
     }
 
 }

@@ -6,7 +6,8 @@
     android:background="@drawable/my_bg">
     <TextView
         android:textSize="38sp"
-        android:text="Create New Account"
+        android:textColor="@color/colorPrimary"
+        android:text="New Account"
         android:gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:layout_alignParentTop="true"

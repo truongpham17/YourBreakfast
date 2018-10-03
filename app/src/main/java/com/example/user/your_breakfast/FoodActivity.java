@@ -63,7 +63,6 @@ public class FoodActivity extends AppCompatActivity {
     SharedPreferences preferences;
     TextView txtPrice;
     EditText edtComment;
-    RatingBar ratingBar;
     ElegantNumberButton quantity;
     FirebaseRecyclerAdapter<Comment, CommentHolder> adapter;
     TextView txtComment;
@@ -78,6 +77,7 @@ public class FoodActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        hideSystemUI();
         super.onCreate(savedInstanceState);
 
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -87,24 +87,28 @@ public class FoodActivity extends AppCompatActivity {
         AppBarLayout appBar = findViewById(R.id.appBar);
         appBar.setExpanded(true);
         foodDatabase = FirebaseDatabase.getInstance().getReference("Foods");
+        Intent intent = getIntent();
+        if (intent == null) {
+            finish();
+        } else {
+            foodId = intent.getStringExtra("foodId");
+        }
         addControls();
         loadData();
     }
 
     private void addControls() {
-        isCollapsed = true;
-        ratingBar = findViewById(R.id.ratingBar);
+        isCollapsed = false;
         toolbar = findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsingToolbar);
         collapsingToolbarLayout.setCollapsedTitleTypeface(Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf"));
         collapsingToolbarLayout.setExpandedTitleTypeface(Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf"));
 
         imageFood = findViewById(R.id.imageFood);
-        ratingBar.setRating(4.0f);
         edtComment = findViewById(R.id.edtComment);
         txtComment = findViewById(R.id.txtComment);
         expandableLayout = findViewById(R.id.expandLayout);
-        expandableLayout.collapse();
+        expandableLayout.expand();
 
         recyclerView = findViewById(R.id.recyclerViewComment);
         layoutManager = new LinearLayoutManager(this);
@@ -130,12 +134,13 @@ public class FoodActivity extends AppCompatActivity {
             }
         });
         btnLike = findViewById(R.id.btnLike);
+        btnLike.setLiked(new Database(this).isFavorite(foodId));
         preferences = getSharedPreferences(PREFERENCES_MODE, Context.MODE_PRIVATE);
 
         btnLike.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                new Database(FoodActivity.this).addToFavorite(foodId);
+                new Database(FoodActivity.this).addToFavorite(foodId, food.getName(), food.getPrice(), food.getImage());
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Added to favorite!", Snackbar.LENGTH_SHORT).show();
 
             }
@@ -267,6 +272,8 @@ public class FoodActivity extends AppCompatActivity {
         String time = sdf.format(currentTime);
         final Comment comment = new Comment(userName, time, star + "", userComment, imgUser);
         commentData.child(phoneNumber).setValue(comment);
+        Snackbar.make(txtComment, "Thanks you for your comment",Snackbar.LENGTH_SHORT).show();
+        edtComment.setText("");
     }
 
     private void setData() {
@@ -291,12 +298,7 @@ public class FoodActivity extends AppCompatActivity {
     private void loadData() {
 
         // take food category name
-        Intent intent = getIntent();
-        if (intent == null) {
-            finish();
-        } else {
-            foodId = intent.getStringExtra("foodId");
-        }
+
         commentData = FirebaseDatabase.getInstance().getReference("Comment").child(foodId);
         foodDatabase.child(foodId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -351,4 +353,29 @@ public class FoodActivity extends AppCompatActivity {
         }
         return result.toString().substring(0, result.toString().length() - 1);
     }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI();
+    }
+
+    private void hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
 }

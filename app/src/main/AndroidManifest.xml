@@ -83,7 +83,8 @@
         <activity
             android:name=".LocationTrackingActivity"
             android:label="@string/title_activity_location_tracking" />
-        <activity android:name=".MapsExample"></activity>
+        <activity android:name=".MapsExample" />
+        <activity android:name=".FavoriteActivity"></activity>
     </application>
 
 </manifest>

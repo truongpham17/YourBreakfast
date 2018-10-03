@@ -3,10 +3,33 @@ package com.example.user.your_breakfast.viewholder;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class FoodViewHolder extends RecyclerView.ViewHolder {
+import com.example.user.your_breakfast.R;
+import com.example.user.your_breakfast.model.MyOnItemClickListener;
 
+public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public TextView txtCategoryName, txtPrice;
+    public ImageView imgOrder, imgCategory;
+    private MyOnItemClickListener onClickListener;
     public FoodViewHolder(@NonNull View itemView) {
         super(itemView);
+        this.txtCategoryName = itemView.findViewById(R.id.txtCategoryName);
+        txtPrice = itemView.findViewById(R.id.txtPrice);
+        imgOrder= itemView.findViewById(R.id.imgOrder);
+        imgCategory = itemView.findViewById(R.id.imageCategory);
+        imgOrder.setOnClickListener(this);
+        itemView.setOnClickListener(this);
+    }
+
+    public void setOnClickListener(MyOnItemClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        onClickListener.onItemClick(v);
     }
 }

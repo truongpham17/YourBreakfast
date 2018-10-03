@@ -10,6 +10,7 @@
     <TextView
         android:textSize="38sp"
         android:text="Sign In"
+        android:textColor="@color/colorPrimary"
         android:gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:layout_alignParentTop="true"
@@ -31,7 +32,6 @@
             android:id="@+id/txtPhone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/material_edit_text_height"
-            android:layout_below="@id/txtName"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:gravity="bottom"
@@ -50,10 +50,9 @@
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/txtPassword"
             android:layout_width="match_parent"
-            android:textColorHint="@color/colorPrimary"
-            app:met_textColorHint="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimaryDark"
+            app:met_textColorHint="@color/colorPrimaryDark"
             android:layout_height="@dimen/material_edit_text_height"
-            android:layout_below="@id/txtPhone"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:gravity="bottom"

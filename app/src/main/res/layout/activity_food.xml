@@ -12,7 +12,6 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -86,25 +85,6 @@
                         android:textColor="@color/secondaryDark"
                         android:textSize="18sp" />
 
-                    <TextView
-                        android:id="@+id/txtRate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_toStartOf="@id/ratingBar"
-                        android:text="4.5"
-                        android:textColor="@color/secondaryDark"
-                        android:textSize="18dp" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBar"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="60dp"
-                        android:layout_marginTop="12dp" />
 
                     <TextView
                         android:id="@+id/txtFoodName"
@@ -212,7 +192,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="@string/comment_expand"
+                        android:text="@string/comment_collapse"
                         android:textSize="18sp" />
 
                     <net.cachapa.expandablelayout.ExpandableLayout
