@@ -133,11 +133,7 @@ public class Database extends SQLiteAssetHelper {
         SQLiteDatabase db = getReadableDatabase();
         String query = String.format("Select foodID from %s where foodID = '%s'", FAVORITE_TABLE_NAME, foodID);
         Cursor cs = db.rawQuery(query, null);
-        if(cs.getCount() > 0){
-            result = true ;
-        } else{
-            result = false;
-        }
+        result = cs.getCount() > 0;
         cs.close();
         db.close();
         return result;
@@ -151,7 +147,7 @@ public class Database extends SQLiteAssetHelper {
         while (cs.moveToNext()) {
             result.add(new Food(cs.getString(cs.getColumnIndex("name"))
                     , cs.getString(cs.getColumnIndex("price"))
-                    , null, null, cs.getString(cs.getColumnIndex("foodID"))));
+                    , cs.getString(cs.getColumnIndex("imgURL")), null, cs.getString(cs.getColumnIndex("foodID"))));
         }
         cs.close();
         db.close();

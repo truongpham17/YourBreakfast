@@ -12,4 +12,5 @@ public class ShareData {
     public static void setUser(User user) {
         ShareData.user = user;
     }
+    public final static String PREFIX_ADDRESS_CODE = "-AAAA";
 }

@@ -1,25 +1,21 @@
 package com.example.user.your_breakfast;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.your_breakfast.adapter.OrderDetailAdapter;
-import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.model.Order;
 import com.example.user.your_breakfast.model.SubmitOrder;
-import com.example.user.your_breakfast.model.User;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,23 +24,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.List;
+import java.util.Locale;
 
 public class OrderDetailActivity extends AppCompatActivity {
     DatabaseReference orderDatabase;
-    TextView txtStatus, txtUserName, txtPhone, txtAddress, txtSubTotal, txtDelivery, txtTotal;
-    Button btnSubmit;
-    ImageView imgLocation;
+    TextView txtStatus, txtUserName, txtPhone, txtAddress, txtSubTotal, txtDelivery, txtTotal, txtMoreInfo;
+    String address, name, phone, moreInfo;
+    Button btnSubmit, btnCancel;
     List<Order> orders;
     SubmitOrder submitOrder;
     RecyclerView recyclerView;
     OrderDetailAdapter adapter;
-    double Longitude, Latitude;
-    User user;
-
 
 
     private void addControls() {
-        hideSystemUI();
         txtStatus = findViewById(R.id.txtTitle);
         txtUserName = findViewById(R.id.txtUserName);
         txtPhone = findViewById(R.id.txtPhone);
@@ -53,21 +46,9 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtDelivery = findViewById(R.id.txtDelivery);
         txtTotal = findViewById(R.id.txtTotal);
         btnSubmit = findViewById(R.id.btnSubmit);
-        imgLocation = findViewById(R.id.imgLocation);
-        Longitude = 0;
-        Latitude = 0;
-        imgLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(OrderDetailActivity.this, "OK!!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(OrderDetailActivity.this, LocationTrackingActivity.class);
-                Toast.makeText(OrderDetailActivity.this, Longitude + " " + Latitude, Toast.LENGTH_SHORT).show();
-                intent.putExtra("Longitude", Longitude);
-                intent.putExtra("Latitude", Latitude);
-                startActivity(intent);
-            }
-        });
-        user = ShareData.getUser();
+        btnCancel = findViewById(R.id.btnCancel);
+        txtMoreInfo = findViewById(R.id.txtMoreInfo);
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
@@ -77,10 +58,96 @@ public class OrderDetailActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                if (!phone.equals(txtPhone.getText().toString())
+                        || !name.equals(txtUserName.getText().toString())
+                        || !address.equals(txtAddress.getText().toString())
+                        || !moreInfo.equals(txtMoreInfo.getText().toString())) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailActivity.this);
+                    builder.setTitle("Save change?").setPositiveButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            submitOrder.setAddress(txtAddress.getText().toString());
+                            submitOrder.setPhoneNumber(txtPhone.getText().toString());
+                            submitOrder.setName(txtUserName.getText().toString());
+                            submitOrder.setMoreInfo(txtMoreInfo.getText().toString());
+                            orderDatabase.setValue(submitOrder);
+                            onBackPressed();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    onBackPressed();
+                }
             }
         });
 
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderDatabase.child("status").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String status = (String) dataSnapshot.getValue();
+                        if (status == null) {
+                            status = "";
+                        }
+                        if (status.equals("0") || status.equals("1")) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailActivity.this);
+                            builder.setTitle("Are you sure to cancel this order?")
+                                    .setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            orderDatabase.setValue(null);
+                                            onBackPressed();
+                                        }
+                                    })
+                                    .setPositiveButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        } else if (status.equals("2")) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetailActivity.this);
+                            builder.setTitle("Sure to delete?")
+                                    .setMessage("Your order are delivering, if you can, please wait for a couple of minutes " +
+                                            "to receive your order. Otherwise, your account will be blocked for 1 week if you cancel delivering order 2 times. " +
+                                            "Still want to cancel order?")
+                                    .setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            orderDatabase.setValue(null);
+                                            onBackPressed();
+                                        }
+                                    })
+                                    .setPositiveButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        } else {
+                            Snackbar.make(btnCancel, "Cannot cancel this order", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
     }
 
 
@@ -122,13 +189,20 @@ public class OrderDetailActivity extends AppCompatActivity {
                     case 3:
                         txtStatus.setText("Status: Success");
                 }
-                txtPhone.setText(user.getPhone());
-                txtUserName.setText(user.getName());
-                txtAddress.setText(user.getAddress().get("-AAAA").getAddress());
+                txtPhone.setText(submitOrder.getPhoneNumber());
+                phone = txtPhone.getText().toString();
+                txtUserName.setText(submitOrder.getName());
+                name = txtUserName.getText().toString();
+                txtAddress.setText(submitOrder.getAddress());
+                address = txtAddress.getText().toString();
+                txtMoreInfo.setText(submitOrder.getMoreInfo());
+                moreInfo = txtMoreInfo.getText().toString();
                 orders = submitOrder.getOrderDetail();
                 int subTotal = calculateTotal(orders);
-                txtSubTotal.setText("$" + subTotal);
-                txtTotal.setText("$" + subTotal);
+                String subTotalString = String.format(Locale.getDefault(), "$ %d", subTotal);
+                String totalString = String.format(Locale.getDefault(), "$ %d", subTotal);
+                txtSubTotal.setText(subTotalString);
+                txtTotal.setText(totalString);
                 txtDelivery.setText("$0");
                 adapter = new OrderDetailAdapter(orders);
                 recyclerView.setAdapter(adapter);
@@ -162,31 +236,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
-
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
 
 
 }

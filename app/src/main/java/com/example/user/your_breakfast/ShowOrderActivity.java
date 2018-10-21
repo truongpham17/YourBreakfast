@@ -21,14 +21,13 @@ import com.roger.catloadinglibrary.CatLoadingView;
 
 public class ShowOrderActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
+    LinearLayoutManager mLayoutManager;
     DatabaseReference orderDatabase;
     TextView txtEmpty;
     FirebaseRecyclerAdapter<SubmitOrder, OrderViewHolder> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_show_order);
@@ -40,6 +39,8 @@ public class ShowOrderActivity extends AppCompatActivity {
         txtEmpty = findViewById(R.id.txtEmpty);
 
         mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(mLayoutManager);
         orderDatabase = FirebaseDatabase.getInstance().getReference("Requests");
         String phoneNumber = ShareData.getUser().getPhone();
@@ -92,27 +93,5 @@ public class ShowOrderActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

@@ -13,9 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.User;
-import com.google.android.gms.signin.SignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -25,19 +25,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.r0adkll.slidr.Slidr;
 import com.raycoarana.codeinputview.CodeInputView;
 import com.raycoarana.codeinputview.OnCodeCompleteListener;
 import com.roger.catloadinglibrary.CatLoadingView;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -63,7 +58,6 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/nabila.ttf")
                 .setFontAttrId(R.attr.fontPath).build());
@@ -162,8 +156,6 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                 } else if (millisUntilFinished / 1000 == 1) {
                     txtTimeLeft.setText(String.format(Locale.getDefault()
                             , "Please wait %d second to resend code", millisUntilFinished / 1000));
-                } else {
-
                 }
             }
 
@@ -258,7 +250,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
 
     private void signInUserToServer() {
         userTable.child(user.getPhone()).setValue(user);
-        userTable.child(user.getPhone()).child("address").child("-AAAA").setValue(new Address("Home", "Input your address"));
+        userTable.child(user.getPhone()).child("address").child(ShareData.PREFIX_ADDRESS_CODE).setValue(new Address("Home", "Input your address"));
         // register success, change to login screen
         if (!isForgotPassword) {
             changeToLoginScreen();
@@ -313,27 +305,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
 
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
+
 
 }

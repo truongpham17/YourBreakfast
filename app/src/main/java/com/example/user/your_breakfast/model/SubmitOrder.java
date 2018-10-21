@@ -6,6 +6,7 @@ public class SubmitOrder {
     private String phoneNumber, address, status, total, name;
     private List<Order> orderDetail;
     private String time;
+    private String moreInfo;
 
     public SubmitOrder(String phoneNumber, String address, String status, String total, String name, List<Order> orderDetail, String time) {
         this.phoneNumber = phoneNumber;
@@ -15,6 +16,14 @@ public class SubmitOrder {
         this.name = name;
         this.orderDetail = orderDetail;
         this.time = time;
+    }
+
+    public String getMoreInfo() {
+        return moreInfo;
+    }
+
+    public void setMoreInfo(String moreInfo) {
+        this.moreInfo = moreInfo;
     }
 
     public SubmitOrder() {

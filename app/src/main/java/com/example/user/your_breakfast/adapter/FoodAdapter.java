@@ -1,5 +1,6 @@
 package com.example.user.your_breakfast.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.example.user.your_breakfast.model.Category;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.MyOnItemClickListener;
 import com.example.user.your_breakfast.model.Order;
+import com.example.user.your_breakfast.utils.ShareToFacebook;
 import com.example.user.your_breakfast.viewholder.FoodViewHolder;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +44,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FoodViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final FoodViewHolder holder, final int position) {
         holder.txtPrice.setText("Price: $" + mData.get(position).getPrice());
         holder.txtCategoryName.setText(mData.get(position).getName());
         Picasso.get().load(mData.get(position).getImage()).into(holder.imgCategory);
@@ -57,6 +59,17 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodViewHolder>{
                 new Database(parentContext).addToCarts(order);
             }
         });
+
+        holder.imgShareToFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new ShareToFacebook(mData.get(position).getImage(), (Activity) parentContext).share();
+
+
+            }
+        });
+
         holder.setOnClickListener(new MyOnItemClickListener() {
             @Override
             public void onItemClick(View view) {

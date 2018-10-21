@@ -7,18 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.user.your_breakfast.adapter.FoodAdapter;
 import com.example.user.your_breakfast.database.Database;
-import com.example.user.your_breakfast.model.Category;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.MyOnItemClickListener;
 import com.example.user.your_breakfast.model.Order;
-import com.example.user.your_breakfast.viewholder.CategoryViewHolder;
+import com.example.user.your_breakfast.utils.ShareToFacebook;
 import com.example.user.your_breakfast.viewholder.FoodViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +38,6 @@ public class FoodListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_food_list);
@@ -63,21 +61,29 @@ public class FoodListActivity extends AppCompatActivity {
         Typeface tp = Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf");
         textView.setTypeface(tp);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+
+
+
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+
+
 
         foodDatabase = FirebaseDatabase.getInstance().getReference("Foods");
         foodDatabase.orderByChild("MenuId");
         adapter =
                 new FirebaseRecyclerAdapter<Food, FoodViewHolder>(Food.class, R.layout.food_item, FoodViewHolder.class, foodDatabase.orderByChild("MenuId").equalTo(categoryId)) {
                     @Override
-                    protected void populateViewHolder(FoodViewHolder viewHolder, final Food model, final int position) {
+                    protected void populateViewHolder(final FoodViewHolder viewHolder, final Food model, final int position) {
                         viewHolder.txtCategoryName.setText(model.getName());
-                        viewHolder.txtPrice.setText("Price : $" + model.getPrice());
+                        String priceString = String.format(Locale.getDefault(), "Price: $ %s", model.getPrice());
+                        viewHolder.txtPrice.setText(priceString);
                         Picasso.get().load(model.getImage()).into(viewHolder.imgCategory);
                         viewHolder.imgOrder.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -91,6 +97,13 @@ public class FoodListActivity extends AppCompatActivity {
                                 new Database(FoodListActivity.this).addToCarts(order);
                             }
                         });
+
+                        if(position == 0){
+                            int resId = R.anim.layout_animation;
+                            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(FoodListActivity.this, resId);
+                            recyclerView.setLayoutAnimation(animation);
+                        }
+
                         viewHolder.setOnClickListener(new MyOnItemClickListener() {
                             @Override
                             public void onItemClick(View view) {
@@ -99,9 +112,18 @@ public class FoodListActivity extends AppCompatActivity {
                                 startActivity(intent1);
                             }
                         });
+                        viewHolder.imgShareToFb.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new ShareToFacebook(model.getImage(), FoodListActivity.this).share();
+                            }
+                        });
                     }
                 };
         recyclerView.setAdapter(adapter);
+
+
+
     }
 
     @Override
@@ -116,28 +138,5 @@ public class FoodListActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

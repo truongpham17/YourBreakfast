@@ -3,9 +3,9 @@
     <color name="colorPrimary">#fafafa</color>
     <color name="colorPrimaryDark">#c7c7c7</color>
     <color name="colorPrimaryLight">#ffffff</color>
-    <color name="colorSecondary">#ab47bc</color>
-    <color name="secondaryLight">#df78ef</color>
-    <color name="secondaryDark">#790e8b</color>
+    <color name="colorSecondary">#0288d1</color>
+    <color name="secondaryLight">#5eb8ff</color>
+    <color name="secondaryDark">#005b9f</color>
     <color name="textOnP">#000000</color>
     <color name="textOnS">#ffffff</color>
     <color name="colorAccent">#df78ef</color>

@@ -7,15 +7,21 @@
     android:background="@drawable/my_bg"
     tools:context=".VerifyPhoneNumberActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/secondaryDark"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/colorPrimary"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            android:background="@color/secondaryDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
     <TextView
         android:id="@+id/txtTitle"
         android:layout_marginTop="50dp"
@@ -25,7 +31,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="24sp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/appBarLayout"
         android:text="Enter the code from the phone we just send you"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

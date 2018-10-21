@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.your_breakfast.model.User;
+import com.example.user.your_breakfast.utils.EncryptPassword;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,13 +27,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class ResetPasswordActivity extends AppCompatActivity {
     User user;
     Button btnNext, btnPrev;
-    TextView txtPassword;
+    TextView txtPassword, txtRePassword;
     DatabaseReference userDatabase;
     CatLoadingView catLoadingView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setDefaultFont();
@@ -54,6 +55,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         btnNext = findViewById(R.id.btnResetPassword);
         btnPrev = findViewById(R.id.btnPrev);
         txtPassword = findViewById(R.id.txtPassword);
+        txtRePassword = findViewById(R.id.txtRePassword);
         userDatabase = FirebaseDatabase.getInstance().getReference("USER");
         catLoadingView = new CatLoadingView();
     }
@@ -75,6 +77,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private void updateUserPassword() {
         final String password = txtPassword.getText().toString();
+        String rePassword = txtRePassword.getText().toString();
+        if(!password.equals(rePassword)){
+            txtRePassword.setError("Re Password is not match!");
+            return;
+        }
         if (password.isEmpty()) {
             txtPassword.setError("Please input password!");
             return;
@@ -91,7 +98,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    userDatabase.child(user.getPhone()).child("password").setValue(password);
+                    userDatabase.child(user.getPhone()).child("password").setValue(EncryptPassword.encrypt(password));
                     catLoadingView.getDialog().dismiss();
                 } else {
                     Toast.makeText(ResetPasswordActivity.this, "Error!", Toast.LENGTH_SHORT).show();
@@ -143,27 +150,5 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

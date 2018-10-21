@@ -1,6 +1,5 @@
 package com.example.user.your_breakfast;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,18 +10,14 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +43,9 @@ import com.squareup.picasso.Picasso;
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
@@ -69,15 +66,13 @@ public class FoodActivity extends AppCompatActivity {
     ExpandableLayout expandableLayout;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    Button btnComment, btnAddToCard, btnDelivery;
+    Button btnComment, btnDelivery;
     LikeButton btnLike;
     boolean isCollapsed;
     private static final String PREFERENCES_MODE = "food_added_to_cart";
-    private static final String LOVE_MODE = "food_favorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
 
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -141,32 +136,19 @@ public class FoodActivity extends AppCompatActivity {
             @Override
             public void liked(LikeButton likeButton) {
                 new Database(FoodActivity.this).addToFavorite(foodId, food.getName(), food.getPrice(), food.getImage());
+                Toast.makeText(FoodActivity.this, food.getImage(), Toast.LENGTH_SHORT).show();
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Added to favorite!", Snackbar.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-               new Database(FoodActivity.this).removeFromFavorite(foodId);
+                new Database(FoodActivity.this).removeFromFavorite(foodId);
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Removed from favorite!", Snackbar.LENGTH_SHORT).show();
             }
         });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialogComfirmBuying();
-            }
-        });
-        quantity = findViewById(R.id.quantity);
-        quantity.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
-            @Override
-            public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
-                txtPrice.setText("Total: $" + Integer.parseInt(food.getPrice()) * newValue);
-            }
-        });
-        btnAddToCard = findViewById(R.id.btnAddToCart);
-        btnAddToCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addToCart();
@@ -180,11 +162,20 @@ public class FoodActivity extends AppCompatActivity {
                 snackbar.show();
             }
         });
+        quantity = findViewById(R.id.quantity);
+        quantity.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
+            @Override
+            public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+                String priceString = String.format(Locale.getDefault(), "Total: $ + %d", Integer.parseInt(food.getPrice()) * newValue);
+                txtPrice.setText(priceString);
+            }
+        });
+
         btnDelivery = findViewById(R.id.btnDelivery);
         btnDelivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogComfirmBuying();
+                showDialogConfirmBuying();
             }
         });
 
@@ -202,50 +193,20 @@ public class FoodActivity extends AppCompatActivity {
         new Database(this).redoAddToCart(foodId, realQuantity);
     }
 
-    private void showDialogComfirmBuying() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.order_item, null);
-        builder.setView(dialogView);
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.show();
-        EditText edtUserName = dialogView.findViewById(R.id.txtUserName);
-        EditText edtPhone = dialogView.findViewById(R.id.txtPhone);
-        EditText edtAddress = dialogView.findViewById(R.id.txtAddress);
-        TextView txtContent = dialogView.findViewById(R.id.txtContent);
-        txtContent.setText("You order " + quantity.getNumber() + " " + changeToLowerCase(food.getName())
-                + ". Total: $" + Integer.parseInt(food.getPrice()) * Integer.parseInt(quantity.getNumber()));
-        User user = ShareData.getUser();
-        edtUserName.setText(user.getName());
-        edtPhone.setText(user.getPhone());
-        edtAddress.setText(user.getAddress().get("-AAAA").getAddress());
-        boolean flat = true;
-        if (edtAddress.getText().toString().isEmpty()) {
-            flat = false;
-            edtAddress.setError("Please enter your address!");
-        }
-        if (edtPhone.getText().toString().isEmpty()) {
-            flat = false;
-            edtPhone.setError("Please enter your phone!");
-        }
-        if (edtUserName.getText().toString().isEmpty()) {
-            flat = false;
-            edtUserName.setError("Please enter your Name!");
-        }
-        Button btnDelivery = dialogView.findViewById(R.id.btnDelivery);
-        if (flat) {
-            btnDelivery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(FoodActivity.this, "Thanks you! You can see your order in your history.", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
-                }
-            });
-        }
+    private void showDialogConfirmBuying() {
+        String content = "You order " + quantity.getNumber() + " " + changeToLowerCase(food.getName())
+                + ". Total: $" + Integer.parseInt(food.getPrice()) * Integer.parseInt(quantity.getNumber());
+        Date date = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm-dd MMM yyyy", Locale.getDefault());
+        String realDate = sdf.format(date);
+        Order order = new Order(foodId, food.getName(), food.getPrice(), Integer.parseInt(quantity.getNumber()), realDate, food.getImage());
+        ArrayList<Order> orders = new ArrayList<>();
+        orders.add(order);
+        new com.example.user.your_breakfast.utils.SubmitOrder(this, orders, content, null).submit();
 
 
     }
+
 
     private void sendCommentToServer() {
         String userComment = edtComment.getText().toString();
@@ -272,14 +233,15 @@ public class FoodActivity extends AppCompatActivity {
         String time = sdf.format(currentTime);
         final Comment comment = new Comment(userName, time, star + "", userComment, imgUser);
         commentData.child(phoneNumber).setValue(comment);
-        Snackbar.make(txtComment, "Thanks you for your comment",Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(txtComment, "Thanks you for your comment", Snackbar.LENGTH_SHORT).show();
         edtComment.setText("");
     }
 
     private void setData() {
         toolbar.setTitle(changeToLowerCase(food.getName()));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Picasso.get().load(food.getImage()).into(imageFood);
         TextView txtUserName = findViewById(R.id.txtUserName);
         User user = ShareData.getUser();
@@ -290,7 +252,8 @@ public class FoodActivity extends AppCompatActivity {
         }
         TextView txtDescription = findViewById(R.id.txtDescription);
         txtDescription.setText(food.getDescription());
-        txtPrice.setText("Total: $" + food.getPrice());
+        String priceString = String.format(Locale.getDefault(), "Total: $ %s", food.getPrice());
+        txtPrice.setText(priceString);
         TextView txtFoodName = findViewById(R.id.txtFoodName);
         txtFoodName.setText(food.getName());
     }
@@ -349,33 +312,12 @@ public class FoodActivity extends AppCompatActivity {
         String[] arr = foodName.split(" ");
         StringBuilder result = new StringBuilder();
         for (String s : arr) {
-            result.append(s.charAt(0) + s.substring(1).toLowerCase() + " ");
+            result.append(s.charAt(0));
+            result.append(s.substring(1));
+            result.append(" ");
         }
         return result.toString().substring(0, result.toString().length() - 1);
     }
 
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

@@ -2,28 +2,25 @@ package com.example.user.your_breakfast;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
-import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.User;
+import com.example.user.your_breakfast.utils.EncryptPassword;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.r0adkll.slidr.Slidr;
 import com.roger.catloadinglibrary.CatLoadingView;
-
-import java.util.HashMap;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -36,7 +33,6 @@ public class SignInActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/nabila.ttf").setFontAttrId(R.attr.fontPath).build());
@@ -83,6 +79,7 @@ public class SignInActivity extends AppCompatActivity {
             txtPassword.setError("Please enter your password");
             flat = false;
         }
+        catLoadingView.setCanceledOnTouchOutside(false);
         if (flat) {
             if (catLoadingView.isAdded()) {
                 catLoadingView.getDialog().show();
@@ -94,7 +91,7 @@ public class SignInActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() != null) {
                         User user = dataSnapshot.getValue(User.class);
-                        if (user.getPhone().equals(phone) && user.getPassword().equals(password)) {
+                        if (user.getPhone().equals(phone) && user.getPassword().equals(EncryptPassword.encrypt(password))) {
                             ShareData.setUser(user);
                             changeToMainMenu();
                             catLoadingView.getDialog().dismiss();
@@ -118,6 +115,10 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void changeToMainMenu() {
+        SharedPreferences preferences = getSharedPreferences("MY_PREF", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("USER", txtPhone.getText().toString());
+        editor.apply();
         Intent intent = new Intent(this, FoodCategoryActivity.class);
         startActivity(intent);
         finish();
@@ -143,28 +144,6 @@ public class SignInActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-    }
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
 }

@@ -12,15 +12,17 @@ import com.example.user.your_breakfast.model.MyOnItemClickListener;
 public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView txtCategoryName, txtPrice;
-    public ImageView imgOrder, imgCategory;
+    public ImageView imgOrder, imgCategory, imgShareToFb;
     private MyOnItemClickListener onClickListener;
     public FoodViewHolder(@NonNull View itemView) {
         super(itemView);
         this.txtCategoryName = itemView.findViewById(R.id.txtCategoryName);
         txtPrice = itemView.findViewById(R.id.txtPrice);
         imgOrder= itemView.findViewById(R.id.imgOrder);
+        imgShareToFb = itemView.findViewById(R.id.imgShareToFb);
         imgCategory = itemView.findViewById(R.id.imageCategory);
         imgOrder.setOnClickListener(this);
+        imgShareToFb.setOnClickListener(this);
         itemView.setOnClickListener(this);
     }
 

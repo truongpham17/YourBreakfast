@@ -1,37 +1,87 @@
 package com.example.user.your_breakfast;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.View.OnSystemUiVisibilityChangeListener;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+
+import com.example.user.your_breakfast.common.ShareData;
+import com.example.user.your_breakfast.model.User;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.roger.catloadinglibrary.CatLoadingView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     Button btnSignIn, btnSignUp;
-    Boolean isShow = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         //set default font for all element on this activity
         setDefaultFont();
         setContentView(R.layout.activity_main);
+        AppEventsLogger.activateApp(getApplication());
         //set controls for element view
         addControls();
         //add action for element objects
         addEvents();
+        if (checkConnection()) {
+            loginRememerUser();
+        } else {
+            Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+        }
+    }
 
+    private boolean checkConnection() {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+    }
+
+    private boolean loginRememerUser() {
+        SharedPreferences preferences = getSharedPreferences("MY_PREF", MODE_PRIVATE);
+        String userID = preferences.getString("USER", "null");
+        if (!userID.equals("null")) {
+            final CatLoadingView catLoadingView = new CatLoadingView();
+            catLoadingView.show(getSupportFragmentManager(), "CatLoadingView");
+            catLoadingView.setCanceledOnTouchOutside(false);
+            DatabaseReference user = FirebaseDatabase.getInstance().getReference("USER").child(userID);
+            user.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Intent intent = new Intent(MainActivity.this, FoodCategoryActivity.class);
+                    ShareData.setUser(user);
+                    startActivity(intent);
+                    catLoadingView.dismiss();
+                    finish();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
     private void addEvents() {
@@ -39,14 +89,24 @@ public class MainActivity extends AppCompatActivity  {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeToLoginScreen();
+                if (checkConnection()) {
+                    if (!loginRememerUser()) {
+                        changeToLoginScreen();
+                    }
+                } else {
+                    Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
         // When user click on sign up button, change to sign up scren, no extra require
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeToSignUpScreen();
+                if (checkConnection()) {
+                    changeToSignUpScreen();
+                } else {
+                    Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -85,27 +145,5 @@ public class MainActivity extends AppCompatActivity  {
         super.onBackPressed();
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
-
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

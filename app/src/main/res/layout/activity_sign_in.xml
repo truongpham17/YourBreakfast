@@ -41,7 +41,7 @@
             android:inputType="phone"
             android:textSize="25sp"
             app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="Enter your phone, we will send verify code to that number"
+            app:met_floatingLabelText="Enter your phone"
             app:met_floatingLabelTextColor="@android:color/white"
             app:met_floatingLabelTextSize="14sp"
             app:met_maxCharacters="15"
@@ -69,7 +69,7 @@
     <TextView
         android:id="@+id/txtForgot"
         android:layout_marginEnd="20dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:textColor="@color/colorPrimary"
         android:layout_below="@id/linearLayout"
         android:text="Forgot your password?"

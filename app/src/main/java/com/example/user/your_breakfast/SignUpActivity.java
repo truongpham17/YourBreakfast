@@ -10,12 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.user.your_breakfast.model.User;
+import com.example.user.your_breakfast.utils.EncryptPassword;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.r0adkll.slidr.Slidr;
 import com.roger.catloadinglibrary.CatLoadingView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -30,7 +30,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideSystemUI();
         super.onCreate(savedInstanceState);
         //set default font for all element on this activity
         setDefaultFont();
@@ -99,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
                         catLoadingView.dismiss();
                     } else{
                         Intent intent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
-                        User user = new User(txtName.getText().toString(), txtPhone.getText().toString(), txtPassword.getText().toString());
+                        User user = new User(txtName.getText().toString(), txtPhone.getText().toString(), EncryptPassword.encrypt(txtPassword.getText().toString()));
                         intent.putExtra("user", user);
                         startActivity(intent);
                         catLoadingView.dismiss();
@@ -133,27 +132,6 @@ public class SignUpActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
-    }
 
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
 
 }

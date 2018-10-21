@@ -21,9 +21,9 @@
         <TextView
             android:id="@+id/txtFoodName"
             android:layout_marginStart="8dp"
-            android:layout_toRightOf="@id/imgFood"
+            android:layout_toEndOf="@id/imgFood"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -31,9 +31,9 @@
             android:id="@+id/txtQuantity"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="18sp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/txtFoodName"
+            android:layout_toStartOf="@id/txtSum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
@@ -43,7 +43,7 @@
             android:layout_alignParentEnd="true"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
