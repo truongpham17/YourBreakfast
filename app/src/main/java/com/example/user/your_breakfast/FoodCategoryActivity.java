@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,17 +17,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.model.Category;
 import com.example.user.your_breakfast.model.MyOnItemClickListener;
 import com.example.user.your_breakfast.viewholder.CategoryViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +50,7 @@ public class FoodCategoryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_category);
 
+        /*************************************************/
 
         //auto generate
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -68,6 +73,7 @@ public class FoodCategoryActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /****************************************************/
         //add controls to xml elements
         addControls();
 
@@ -103,11 +109,7 @@ public class FoodCategoryActivity extends AppCompatActivity
         dbUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    Picasso.get().load(dataSnapshot.getValue().toString()).into(img);
-                } else {
-                    Toast.makeText(FoodCategoryActivity.this, "There is some error, please try again!", Toast.LENGTH_SHORT).show();
-                }
+                Picasso.get().load(dataSnapshot.getValue().toString()).into(img);
             }
 
             @Override
@@ -172,7 +174,13 @@ public class FoodCategoryActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return item.getItemId() == R.id.action_settings || super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -195,7 +203,7 @@ public class FoodCategoryActivity extends AppCompatActivity
             SharedPreferences preferences = getSharedPreferences("MY_PREF", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("USER", "null");
-            editor.apply();
+            editor.commit();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();

@@ -133,7 +133,11 @@ public class Database extends SQLiteAssetHelper {
         SQLiteDatabase db = getReadableDatabase();
         String query = String.format("Select foodID from %s where foodID = '%s'", FAVORITE_TABLE_NAME, foodID);
         Cursor cs = db.rawQuery(query, null);
-        result = cs.getCount() > 0;
+        if (cs.getCount() > 0) {
+            result = true;
+        } else {
+            result = false;
+        }
         cs.close();
         db.close();
         return result;

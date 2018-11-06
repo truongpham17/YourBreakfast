@@ -1,29 +1,41 @@
 package com.example.user.your_breakfast;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.your_breakfast.adapter.FoodAdapter;
 import com.example.user.your_breakfast.database.Database;
+import com.example.user.your_breakfast.model.Category;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.MyOnItemClickListener;
 import com.example.user.your_breakfast.model.Order;
 import com.example.user.your_breakfast.utils.ShareToFacebook;
+import com.example.user.your_breakfast.viewholder.CategoryViewHolder;
 import com.example.user.your_breakfast.viewholder.FoodViewHolder;
+import com.facebook.CallbackManager;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.r0adkll.slidr.Slidr;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -61,9 +73,8 @@ public class FoodListActivity extends AppCompatActivity {
         Typeface tp = Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf");
         textView.setTypeface(tp);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
@@ -82,8 +93,7 @@ public class FoodListActivity extends AppCompatActivity {
                     @Override
                     protected void populateViewHolder(final FoodViewHolder viewHolder, final Food model, final int position) {
                         viewHolder.txtCategoryName.setText(model.getName());
-                        String priceString = String.format(Locale.getDefault(), "Price: $ %s", model.getPrice());
-                        viewHolder.txtPrice.setText(priceString);
+                        viewHolder.txtPrice.setText("Price : $" + model.getPrice());
                         Picasso.get().load(model.getImage()).into(viewHolder.imgCategory);
                         viewHolder.imgOrder.setOnClickListener(new View.OnClickListener() {
                             @Override

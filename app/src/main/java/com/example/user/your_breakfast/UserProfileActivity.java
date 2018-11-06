@@ -7,7 +7,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -18,15 +20,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.helper.RecycerItemAddressTouchHelper;
+import com.example.user.your_breakfast.helper.RecyclerItemTouchHelper;
 import com.example.user.your_breakfast.helper.RecyclerItemTouchHelperListener;
 import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.User;
@@ -34,6 +39,7 @@ import com.example.user.your_breakfast.viewholder.AddressViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,6 +53,11 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.Random;
+import java.util.UUID;
+import java.util.logging.SocketHandler;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,9 +89,8 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         Typeface tp = Typeface.createFromAsset(getAssets(), "fonts/nabila.ttf");
         textView.setTypeface(tp);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         addControls();
     }
@@ -206,13 +216,13 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
                     } else {
                         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                         background.setBackground(drawable);
-                        pushImageIntoWebServer(bitmap, false);
+                        pushImageIntoWebServer(bitmap, true);
                     }
                 } catch (Exception e) {
-                    Log.d("UserProfileActivity: ", e.getMessage());
+
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.d("UserProfileActivity: ", "onActivityResult:  error at crop image");
+                Log.d("error", "onActivityResult:  error at crop image");
             }
         }
     }
@@ -229,42 +239,38 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         byte[] byteArray = stream.toByteArray();
         final StorageReference firememeRef = storage.getReference(path);
 
-        StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("text", "user avatar image").build();
-        UploadTask uploadTask = firememeRef.putBytes(byteArray, metadata);
-        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+        StorageMetadata metadata  = new StorageMetadata.Builder().setCustomMetadata("text", "user avatar image").build();
+        UploadTask uploadTask = firememeRef.putBytes(byteArray, metadata)
+                ;
+       Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+           @Override
+           public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+               if(!task.isSuccessful()){
+                   throw task.getException();
+               }
+               return firememeRef.getDownloadUrl();
+           }
+       }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+           @Override
+           public void onComplete(@NonNull Task<Uri> task) {
+               if(task.isSuccessful()){
+                   Uri downloadUri = task.getResult();
+                   if(downloadUri != null){
+                       user.setImage(downloadUri.toString());
+                       DatabaseReference db = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("image");
+                       db.setValue(downloadUri.toString());
+                   }
 
-                if (!task.isSuccessful()) {
-                    if (task.getException() != null)
-                        throw task.getException();
-                    else
-                        throw new Exception();
-                }
-                return firememeRef.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    if (downloadUri != null) {
-                        user.setImage(downloadUri.toString());
-                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("image");
-                        db.setValue(downloadUri.toString());
-                    }
-
-                }
-            }
-        });
+               }
+           }
+       });
 
 
     }
 
     private void showEditPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        View v = LayoutInflater.from(this).inflate(R.layout.delete_dialog, null, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.delete_dialog, null);
         builder.setView(v);
         final AlertDialog dialog = builder.create();
         dialog.show();
@@ -301,7 +307,7 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
     private void editUserAddress(final Address model, final String key) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        View v = inflater.inflate(R.layout.address_dialog, null, false);
+        View v = inflater.inflate(R.layout.address_dialog, null);
         builder.setView(v);
         final AlertDialog dialog = builder.create();
         dialog.show();

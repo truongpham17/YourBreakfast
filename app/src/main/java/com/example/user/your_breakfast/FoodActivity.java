@@ -1,5 +1,6 @@
 package com.example.user.your_breakfast;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,25 +11,34 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.database.Database;
+import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.Comment;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.Order;
+import com.example.user.your_breakfast.model.SubmitOrder;
 import com.example.user.your_breakfast.model.User;
 import com.example.user.your_breakfast.viewholder.CommentHolder;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +48,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.r0adkll.slidr.Slidr;
+import com.roger.catloadinglibrary.CatLoadingView;
 import com.squareup.picasso.Picasso;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -46,8 +57,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class FoodActivity extends AppCompatActivity {
@@ -70,6 +85,7 @@ public class FoodActivity extends AppCompatActivity {
     LikeButton btnLike;
     boolean isCollapsed;
     private static final String PREFERENCES_MODE = "food_added_to_cart";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,8 +182,7 @@ public class FoodActivity extends AppCompatActivity {
         quantity.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
             @Override
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
-                String priceString = String.format(Locale.getDefault(), "Total: $ + %d", Integer.parseInt(food.getPrice()) * newValue);
-                txtPrice.setText(priceString);
+                txtPrice.setText("Total: $" + Integer.parseInt(food.getPrice()) * newValue);
             }
         });
 
@@ -240,8 +255,7 @@ public class FoodActivity extends AppCompatActivity {
     private void setData() {
         toolbar.setTitle(changeToLowerCase(food.getName()));
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Picasso.get().load(food.getImage()).into(imageFood);
         TextView txtUserName = findViewById(R.id.txtUserName);
         User user = ShareData.getUser();
@@ -252,8 +266,7 @@ public class FoodActivity extends AppCompatActivity {
         }
         TextView txtDescription = findViewById(R.id.txtDescription);
         txtDescription.setText(food.getDescription());
-        String priceString = String.format(Locale.getDefault(), "Total: $ %s", food.getPrice());
-        txtPrice.setText(priceString);
+        txtPrice.setText("Total: $" + food.getPrice());
         TextView txtFoodName = findViewById(R.id.txtFoodName);
         txtFoodName.setText(food.getName());
     }
@@ -312,9 +325,7 @@ public class FoodActivity extends AppCompatActivity {
         String[] arr = foodName.split(" ");
         StringBuilder result = new StringBuilder();
         for (String s : arr) {
-            result.append(s.charAt(0));
-            result.append(s.substring(1));
-            result.append(" ");
+            result.append(s.charAt(0) + s.substring(1).toLowerCase() + " ");
         }
         return result.toString().substring(0, result.toString().length() - 1);
     }

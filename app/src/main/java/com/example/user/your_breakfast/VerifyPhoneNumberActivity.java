@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -156,6 +155,8 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                 } else if (millisUntilFinished / 1000 == 1) {
                     txtTimeLeft.setText(String.format(Locale.getDefault()
                             , "Please wait %d second to resend code", millisUntilFinished / 1000));
+                } else {
+
                 }
             }
 
@@ -250,7 +251,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
 
     private void signInUserToServer() {
         userTable.child(user.getPhone()).setValue(user);
-        userTable.child(user.getPhone()).child("address").child(ShareData.PREFIX_ADDRESS_CODE).setValue(new Address("Home", "Input your address"));
+        userTable.child(user.getPhone()).child("address").child("-AAAA").setValue(new Address("Home", "Input your address"));
         // register success, change to login screen
         if (!isForgotPassword) {
             changeToLoginScreen();

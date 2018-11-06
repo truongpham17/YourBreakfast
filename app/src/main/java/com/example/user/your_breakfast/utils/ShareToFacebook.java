@@ -15,17 +15,16 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 public class ShareToFacebook {
-    private String imgURL;
-    private Activity parentContext;
-    private Target target;
-    private ShareDialog shareDialog;
+    String imgURL;
+    Activity parentContext;
+    Target target;
+    ShareDialog shareDialog;
     public ShareToFacebook(String imgURL, Activity parentContext){
         this.imgURL = imgURL;
         this.parentContext = parentContext;
 
-        shareDialog = new ShareDialog(parentContext);
 
-        target = new Target() {
+        Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 SharePhoto photo = new SharePhoto.Builder().setBitmap(bitmap)

@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
+import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.User;
 import com.example.user.your_breakfast.utils.EncryptPassword;
 import com.google.firebase.database.DataSnapshot;
@@ -20,7 +22,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.r0adkll.slidr.Slidr;
 import com.roger.catloadinglibrary.CatLoadingView;
+
+import java.util.HashMap;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -115,10 +120,11 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void changeToMainMenu() {
+
         SharedPreferences preferences = getSharedPreferences("MY_PREF", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("USER", txtPhone.getText().toString());
-        editor.apply();
+        editor.commit();
         Intent intent = new Intent(this, FoodCategoryActivity.class);
         startActivity(intent);
         finish();
