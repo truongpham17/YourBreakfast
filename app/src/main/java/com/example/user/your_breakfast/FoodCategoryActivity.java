@@ -3,7 +3,10 @@ package com.example.user.your_breakfast;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +26,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.model.Category;
@@ -37,6 +42,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class FoodCategoryActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -117,6 +123,7 @@ public class FoodCategoryActivity extends AppCompatActivity
 
             }
         });
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         TextView txtTitle = (TextView) toolbar.getChildAt(0);
         txtTitle.setTypeface(typeface);
@@ -157,7 +164,7 @@ public class FoodCategoryActivity extends AppCompatActivity
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    System.exit(1);
+                    System.exit(0);
                 }
             });
             builder.setPositiveButton("No", new DialogInterface.OnClickListener() {

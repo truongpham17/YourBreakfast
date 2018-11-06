@@ -126,6 +126,7 @@ public class SignInActivity extends AppCompatActivity {
         editor.putString("USER", txtPhone.getText().toString());
         editor.commit();
         Intent intent = new Intent(this, FoodCategoryActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
     }

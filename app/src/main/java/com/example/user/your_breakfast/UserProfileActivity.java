@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +42,11 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -129,9 +133,28 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         txtUserName.setText(user.getName());
 
         txtPhone.setText(user.getPhone());
+
+
         if (user.getImage() != null) {
             Picasso.get().load(user.getImage()).into(imgAvatar);
         }
+        DatabaseReference backgroundData = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("background");
+        backgroundData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    ImageView backgroundImg = new ImageView(UserProfileActivity.this);
+                    Picasso.get().load(dataSnapshot.getValue().toString()).into(backgroundImg);
+                    background.setBackground((BitmapDrawable) backgroundImg.getDrawable());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         imgAddPayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,26 +203,26 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         imgAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeAvatar();
                 isAvatar = true;
+                changeAvatar();
             }
         });
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeAvatar();
                 isAvatar = false;
+                changeAvatar();
             }
         });
         cropImageView = findViewById(R.id.cropImageView);
     }
 
     private void changeAvatar() {
-        isAvatar = true;
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -216,7 +239,7 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
                     } else {
                         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                         background.setBackground(drawable);
-                        pushImageIntoWebServer(bitmap, true);
+                        pushImageIntoWebServer(bitmap, false);
                     }
                 } catch (Exception e) {
 
@@ -227,7 +250,7 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         }
     }
 
-    private void pushImageIntoWebServer(Bitmap bitmap, boolean isAvatar) {
+    private void pushImageIntoWebServer(Bitmap bitmap, final boolean isAvatar) {
         String path;
         if (isAvatar) {
             path = user.getPhone() + "/" + "avatar";
@@ -239,31 +262,36 @@ public class UserProfileActivity extends AppCompatActivity implements RecyclerIt
         byte[] byteArray = stream.toByteArray();
         final StorageReference firememeRef = storage.getReference(path);
 
-        StorageMetadata metadata  = new StorageMetadata.Builder().setCustomMetadata("text", "user avatar image").build();
-        UploadTask uploadTask = firememeRef.putBytes(byteArray, metadata)
-                ;
-       Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-           @Override
-           public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-               if(!task.isSuccessful()){
-                   throw task.getException();
-               }
-               return firememeRef.getDownloadUrl();
-           }
-       }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-           @Override
-           public void onComplete(@NonNull Task<Uri> task) {
-               if(task.isSuccessful()){
-                   Uri downloadUri = task.getResult();
-                   if(downloadUri != null){
-                       user.setImage(downloadUri.toString());
-                       DatabaseReference db = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("image");
-                       db.setValue(downloadUri.toString());
-                   }
+        StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("text", "user avatar image").build();
+        UploadTask uploadTask = firememeRef.putBytes(byteArray, metadata);
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return firememeRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    if (downloadUri != null) {
+                        if(isAvatar){
+                            user.setImage(downloadUri.toString());
+                            DatabaseReference db = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("image");
+                            db.setValue(downloadUri.toString());
+                        } else {
+                            DatabaseReference db = FirebaseDatabase.getInstance().getReference("USER").child(user.getPhone()).child("background");
+                            db.setValue(downloadUri.toString());
+                        }
 
-               }
-           }
-       });
+                    }
+
+                }
+            }
+        });
 
 
     }

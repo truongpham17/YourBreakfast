@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.user.your_breakfast.common.ShareData;
@@ -29,6 +30,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
     Button btnSignIn, btnSignUp;
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
         addEvents();
         if (checkConnection()) {
             loginRememerUser();
+
         } else {
-            Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(relativeLayout, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -95,9 +98,10 @@ public class MainActivity extends AppCompatActivity {
                 if (checkConnection()) {
                     if (!loginRememerUser()) {
                         changeToLoginScreen();
+                        finish();
                     }
                 } else {
-                    Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(relativeLayout, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -108,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkConnection()) {
                     changeToSignUpScreen();
                 } else {
-                    Snackbar.make(btnSignIn, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(relativeLayout, "There is no Internet connection. Please connect and try again!", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     private void addControls() {
         btnSignIn = findViewById(R.id.btnSignIn);
         btnSignUp = findViewById(R.id.btnSignUp);
+        relativeLayout = findViewById(R.id.relativeLayout);
 
     }
 
