@@ -137,7 +137,6 @@ public class FoodActivity extends AppCompatActivity {
             @Override
             public void liked(LikeButton likeButton) {
                 new Database(FoodActivity.this).addToFavorite(foodId, food.getName(), food.getPrice(), food.getImage());
-                Toast.makeText(FoodActivity.this, food.getImage(), Toast.LENGTH_SHORT).show();
                 Snackbar.make(findViewById(R.id.mCoordinateLayout), "Added to favorite!", Snackbar.LENGTH_SHORT).show();
 
             }
