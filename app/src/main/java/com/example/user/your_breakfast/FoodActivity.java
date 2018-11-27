@@ -1,6 +1,5 @@
 package com.example.user.your_breakfast;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,34 +10,25 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.user.your_breakfast.common.ShareData;
 import com.example.user.your_breakfast.database.Database;
-import com.example.user.your_breakfast.model.Address;
 import com.example.user.your_breakfast.model.Comment;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.Order;
-import com.example.user.your_breakfast.model.SubmitOrder;
 import com.example.user.your_breakfast.model.User;
 import com.example.user.your_breakfast.viewholder.CommentHolder;
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +38,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.r0adkll.slidr.Slidr;
-import com.roger.catloadinglibrary.CatLoadingView;
 import com.squareup.picasso.Picasso;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -57,12 +46,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class FoodActivity extends AppCompatActivity {
@@ -217,7 +202,7 @@ public class FoodActivity extends AppCompatActivity {
         Order order = new Order(foodId, food.getName(), food.getPrice(), Integer.parseInt(quantity.getNumber()), realDate, food.getImage());
         ArrayList<Order> orders = new ArrayList<>();
         orders.add(order);
-        new com.example.user.your_breakfast.utils.SubmitOrder(this, orders, content, null).submit();
+        new com.example.user.your_breakfast.common.SubmitOrder(this, orders, content, null).submit();
 
 
     }

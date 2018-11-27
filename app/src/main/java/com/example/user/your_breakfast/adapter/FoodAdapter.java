@@ -11,14 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.user.your_breakfast.FoodActivity;
-import com.example.user.your_breakfast.FoodListActivity;
 import com.example.user.your_breakfast.R;
 import com.example.user.your_breakfast.database.Database;
-import com.example.user.your_breakfast.model.Category;
 import com.example.user.your_breakfast.model.Food;
 import com.example.user.your_breakfast.model.MyOnItemClickListener;
 import com.example.user.your_breakfast.model.Order;
-import com.example.user.your_breakfast.utils.ShareToFacebook;
+import com.example.user.your_breakfast.common.ShareToFacebook;
 import com.example.user.your_breakfast.viewholder.FoodViewHolder;
 import com.squareup.picasso.Picasso;
 

@@ -1,4 +1,4 @@
-package com.example.user.your_breakfast.utils;
+package com.example.user.your_breakfast.common;
 
 import android.content.Context;
 import android.content.Intent;

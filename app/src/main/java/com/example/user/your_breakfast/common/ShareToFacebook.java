@@ -1,4 +1,4 @@
-package com.example.user.your_breakfast.utils;
+package com.example.user.your_breakfast.common;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,9 +22,9 @@ public class ShareToFacebook {
     public ShareToFacebook(String imgURL, Activity parentContext){
         this.imgURL = imgURL;
         this.parentContext = parentContext;
+        this.shareDialog = new ShareDialog(parentContext);
 
-
-        Target target = new Target() {
+        target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 SharePhoto photo = new SharePhoto.Builder().setBitmap(bitmap)
@@ -47,6 +47,8 @@ public class ShareToFacebook {
             }
         };
     }
+
+
     public void share(){
         Picasso.get().load(imgURL).into(target);
     }
